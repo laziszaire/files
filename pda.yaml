@@ -10,10 +10,10 @@ pda-spectral-point-number:
         type: integer
 
 point_number:
-  description: the dimension of the pda-raw-data-retention
+  description: the dimension of the PDA raw_data_retention
   oneof:
     - type: integer
-      description: 0 if PDA raw data is absent
+      description: 0 if pda-raw-data is absent
       enum: 
         - 0
     - type: array
