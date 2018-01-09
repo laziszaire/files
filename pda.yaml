@@ -1,0 +1,88 @@
+pda-spectral-point-number:
+  description: the dimension of pda-spectral-wavelength array
+  oneof:
+    - type: number
+      description: 0 if PDA raw data is absent
+      enum: 
+        - 0
+    - type: array
+      iterms:
+        type: number
+        format: integer
+
+point_number:
+  description: the dimension of the pda-raw-data-retention
+  oneof:
+    - type: number
+      description: 0 if PDA raw data is absent
+      enum: 
+        - 0
+    - type: array
+      iterms:
+        type: number
+        format: integer
+      
+pda-spectral-interval:
+  description: spectral sampling interval, 0 if pda-raw-data is absent
+  type: number
+  format: double
+
+retention_unit:
+  type: string
+  required: true
+
+wavelength_unit:
+  type: string
+  required: true
+
+detector_unit:
+  type: string
+  required: true
+
+raw_data_retention:
+  description: retention time
+  required: true
+  type: array
+  unit: retention-time-unit
+  items: 
+    type: number
+
+pda-spectral-wavelength:
+  type: array
+  required: true
+  description: the wavelength values are sorted in ascending order
+  unit: wavelength-unit
+  items:
+    type: number
+    description: wavelength,format:floating point number
+
+pda-raw-data:
+  type: array
+  description: |
+    containing the ordinate-values of PDA raw data.
+    first dimension index is wavelength, second dimension index is retention-time
+  unit: unit of detector-unit
+  required: true
+  columns: raw-data-retention
+  index: pda-spectral-point-number
+  items:
+    description: first dimension index is wavelength
+    type: array
+    items: 
+      type: number
+      description: second dimension index is retention-time
+
+pda-maximum-value:
+  type: number
+  format: double
+  unit: detector-unit
+
+pda-minimum-value:
+  type: number
+  format: double
+  unit: detector-unit
+
+dimension: 
+  type: array
+  items:
+      type: number
