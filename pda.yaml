@@ -7,8 +7,7 @@ pda-spectral-point-number:
         - 0
     - type: array
       iterms:
-        type: number
-        format: integer
+        type: integer
 
 point_number:
   description: the dimension of the pda-raw-data-retention
@@ -19,8 +18,7 @@ point_number:
         - 0
     - type: array
       iterms:
-        type: number
-        format: integer
+        type: integer
       
 pda-spectral-interval:
   description: spectral sampling interval, 0 if pda-raw-data is absent
@@ -74,15 +72,8 @@ pda-raw-data:
 
 pda-maximum-value:
   type: number
-  format: double
   unit: detector-unit
 
 pda-minimum-value:
   type: number
-  format: double
   unit: detector-unit
-
-dimension: 
-  type: array
-  items:
-      type: number
