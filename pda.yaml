@@ -8,41 +8,10 @@ pda-spectral-point-number:
     - type: array
       iterms:
         type: integer
-
-point_number:
-  description: the dimension of the PDA raw_data_retention
-  oneof:
-    - type: integer
-      description: 0 if pda-raw-data is absent
-      enum: 
-        - 0
-    - type: array
-      iterms:
-        type: integer
-      
+ 
 pda-spectral-interval:
   description: spectral sampling interval, 0 if pda-raw-data is absent
   type: number
-
-retention_unit:
-  type: string
-  required: true
-
-wavelength_unit:
-  type: string
-  required: true
-
-detector_unit:
-  type: string
-  required: true
-
-raw_data_retention:
-  description: raw retention time
-  required: true
-  type: array
-  unit: retention_unit
-  items: 
-    type: number
 
 pda-spectral-wavelength:
   type: array
