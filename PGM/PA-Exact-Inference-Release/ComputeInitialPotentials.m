@@ -26,7 +26,7 @@ N = length(C.nodes);
 % initialize cluster potentials 
 P.cliqueList = repmat(struct('var', [], 'card', [], 'val', []), N, 1);
 P.edges = zeros(N);
-
+flist = C.factorList;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % YOUR CODE HERE
 %
@@ -41,18 +41,32 @@ P.edges = zeros(N);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 P.edges = C.edges;
 for i = 1:N
-    factor_prod = FactorsProduct(C.factorList(C.nodes{i}));
-    P.cliqueList(i) = factor_prod;
+    [P.cliqueList(i),flist] = clique_init(C.nodes{i},flist,C.factorList);
 end
 end
 
-function factor = FactorsProduct(factors)
-% production of an array of factors.
-% factors is struct array
 
-N = length(factors);
-factor = factors(1);
-for i = 2:N
-    factor = FactorProduct(factor,factors(i));
+%% subfunc
+function [clique,flist] = clique_init(node,flist,flist_all)
+%init the clique
+clique.var = node;
+for i = 1:numel(clique.var)
+    for j = 1:numel(flist_all)
+        idx = (clique.var(i) == flist_all(j).var);
+        if any(idx)
+         clique.card(i) = flist_all(j).card(idx);
+         break;
+        end
+    end
 end
+clique.val = ones(1,prod(clique.card));%init clique to all 1s
+if isempty(flist),return,end
+to_del = [];
+for fi = 1:numel(flist)
+    if all(ismember(flist(fi).var,clique.var))
+        clique = ComputeJointDistribution([clique;flist(fi)]);
+        to_del(end+1)=fi;
+    end
+end
+flist(to_del)=[];
 end
