@@ -1,0 +1,1 @@
+ComputeExactMarginalsBP(ExactMarginal.INPUT)
