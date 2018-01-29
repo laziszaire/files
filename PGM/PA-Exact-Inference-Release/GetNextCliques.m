@@ -33,35 +33,26 @@ j = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % YOUR CODE HERE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% messages that have passed
-res =[];
-n = size(messages,1);
-for i = 1:n
-    for j = 1:n
-        %--- j is neighbor of i
-        is_neighbor = P.edges(i,j)>0;
-        if ~is_neighbor, continue,end
-        %--- j has not received message from i
-        jnot_receivedi = isempty(messages(i,j).var);
-        if ~jnot_receivedi, continue,end
-        %--- i received all the neighbors's message expect j
-        neighbors = find(P.edges(:,i)>0);% all neighbors of i
-        neighbors_except_j = setdiff(neighbors,j);
-        if isempty(neighbors_except_j),%i has no neighbor except j, leaf
-            ireceived = true;
-        else
-            not_empty = @(a) ~isempty(a);
-            ireceived = all(cellfun(not_empty,{messages(neighbors_except_j,i).var}));
-        end
-        if ~ireceived, continue,end
-        if all([is_neighbor,jnot_receivedi,ireceived])
-            res = [i,j];
-            break % find it and break
-        end
+Nclique = numel(P.cliqueList);
+edges = P.edges;
+received = reshape(cellfun(@(a) ~isempty(a),{messages.var}),size(messages));
+for i=1:Nclique
+    for j = 1:Nclique
+        %1. linked
+        linked = edges(i,j)>0;
+        %if ~linked, continue,end
+        %2 j not received message from i
+        not_received = ~received(i,j);
+        %if ~not_received, continue,end
+        %3. i received all messages expect j
+        expectj = setdiff(find(edges(:,i)>0),j);
+        %ready = all(message_not_empty(expectj,i)) && ~message_not_empty(j,i);
+        % i收到了除了j以外的所有节点的message,收没收到j不要求
+        ready = all(received(expectj,i));
+        ready = linked && not_received && ready;
+        if ready, break,end
     end
-    if ~isempty(res),break,end
+    if ready, break,end
 end
-if isempty(res),i=0;j=0;return,end
-[i,j] = deal(res(1),res(2));
-
+if ~ready,i=0;j=0;end
 end

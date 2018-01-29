@@ -2,7 +2,7 @@
 %passed in. Returns A such that A(i) returns the index of the best
 %instantiation for variable i.
 %
-%   For instance: Let's say we have two variables 1 and 2. 
+%   For instance: Let's say we have two variables 1 and 2.
 %   Marginals for 1 = [0.1, 0.3, 0.6]
 %   Marginals for 2 = [0.92, 0.08]
 %   A(1) = 3, A(2) = 1.
@@ -25,6 +25,11 @@ A = [];
 % YOUR CODE HERE
 % Compute the best assignment for variables in the network.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+N = numel(M);
+A = zeros(N,1);
+for i = 1:N
+    [~,idxmax]= max(M(i).val);
+    A(i) = idxmax;
+end
 end
 

@@ -224,7 +224,10 @@ out = sprintf('%s', lines{:});
 
 end
 
-function out = SerializeCompactTree(C, skip=1)
+function out = SerializeCompactTree(C, skip)
+if nargin < 2
+    skip = 1;
+end
 % Serializes a factor struct array into the .fg format for libDAI
 % http://cs.ru.nl/~jorism/libDAI/doc/fileformats.html
 %
@@ -251,7 +254,10 @@ end
 
 
 
-function out = SerializeFactorsFgGrading(F, skip=1)
+function out = SerializeFactorsFgGrading(F, skip)
+if nargin < 2
+    skip = 1;
+end
 % Serializes the factors similar to SerializeFactorsFg
 % but drops factors with values = 1
 % This is only used during grading.
@@ -275,9 +281,17 @@ for i = 1:numel(F)
 
   % Internal storage of factor vals is already in the same indexing order
   % as what libDAI expects, so we don't need to convert the indices.
-  selIdx = !((F(i).val(:)==1)|(F(i).val(:)==0)|isinf(F(i).val(:))|isnan(F(i).val(:)));
+   selIdx = ~((F(i).val(:)==1)|(F(i).val(:)==0)|isinf(F(i).val(:))|isnan(F(i).val(:)));
 
-  vals = [(F(i).val(:)(selIdx))'];
+
+  v = 1;
+  vals = [];
+  for k = 1:length(F(i).val(:))
+      if ~((F(i).val(k)==1)|(F(i).val(k)==0)|isinf(F(i).val(k))|isnan(F(i).val(k)))
+          vals(v) = F(i).val(k);
+          v = v + 1;
+      end
+  end
   vals = vals(1:skip:numel(vals));
   lines{lineIdx} = sprintf('%0.8g\n', vals);
 

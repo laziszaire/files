@@ -18,7 +18,7 @@ if (isempty(A.var)), C = B; return; end;
 if (isempty(B.var)), C = A; return; end;
 
 % Check that variables in both A and B have the same cardinality
-[dummy,iA,iB] = intersect(A.var, B.var);
+[dummy iA iB] = intersect(A.var, B.var);
 if ~isempty(dummy)
 	% A and B have at least 1 variable in common
 	assert(all(A.card(iA) == B.card(iB)), 'Dimensionality mismatch in factors');

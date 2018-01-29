@@ -13,32 +13,39 @@
 
 
 function M = ComputeExactMarginalsBP(F, E, isMax)
+
 if nargin<2,E=[];isMax=0;end
 % initialization
 % you should set it to the correct value in your code
-M = [];
-P = CreateCliqueTree(F, E);
-P = CliqueTreeCalibrate(P, isMax);
+%%% what to init?
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % YOUR CODE HERE
 %
 % Implement Exact and MAP Inference.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%-- given a calibrated tree how to compute marginals?
-%-- a. marginalize any clique that contains it.
-vars = unique([F.var]);
-M = repmat(struct('var', 0, 'card', 0, 'val', []), length(vars), 1);
-N = cellfun(@length,{P.cliqueList.var});
-for i = 1:length(vars)
-    v =vars(i);
-    is_ = cellfun(@(x) ismember(v,x),{P.cliqueList.var});
-    [~,idx]= min(N(is_));a = find(is_);
-    clique_min = P.cliqueList(a(idx));
-    switch isMax,
+P = CreateCliqueTree(F, E);
+P = CliqueTreeCalibrate(P,isMax);
+var1 = unique([F.var]);
+N = numel(var1);
+M = repmat(struct('var', [], 'card', [], 'val', []), N, 1);
+%exact
+for i = 1:N
+    idx = find(cellfun(@(x) ismember(var1(i),x),{P.cliqueList.var}));
+    f = P.cliqueList(idx(1));%cliques中任意一个包含var的clique
+    switch isMax
         case 0
-            M(i) = FactorMarginalization(clique_min,setdiff(clique_min.var,v));
+            M(i) = FactorMarginalization(f,setdiff(f.var,var1(i)));
             M(i).val = M(i).val/sum(M(i).val);
         case 1
+            % MAP log
+            M(i) = FactorMaxMarginalization(f,setdiff(f.var,var1(i)));
     end
 end
+
+
+
+
+
 end

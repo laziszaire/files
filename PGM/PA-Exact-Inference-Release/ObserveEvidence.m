@@ -16,7 +16,7 @@ function F = ObserveEvidence(F, E)
 
 for i = 1:size(E, 1),
     v = E(i, 1); % variable
-    x = E(i, 2); % value
+    x = E(i, 2); % value - assignment of variable
 
     % Check validity of evidence
     if (x == 0),
