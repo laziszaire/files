@@ -53,11 +53,20 @@ LogBS = zeros(1, d);
 %
 % Also you should have only ONE for-loop, as for-loops are VERY slow in matlab
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+allvars = unique([F.var]);
+[~,iv]= ismember(V,allvars);
+[~,i_vnot]= setdiff(allvars,V);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+assignment_v = repmat([1:d]',1,length(V));
+assignment_vnot = repmat(A(i_vnot),d,1);
+assignments = [assignment_v,assignment_vnot];
+assignments(:,[iv;i_vnot]) = assignments;
+for i = 1:length(F)
+    LogBS = LogBS + log(GetValueOfAssignment(F(i),assignments(:,F(i).var)));
+end
 % Re-normalize to prevent underflow when you move back to probability space
 LogBS = LogBS - min(LogBS);
+end
 
 
 
