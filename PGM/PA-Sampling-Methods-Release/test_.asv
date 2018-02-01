@@ -1,0 +1,9 @@
+load('exampleIOPA5.mat')
+disp('logBS')
+[V, G, F, A] = deal(exampleINPUT.t6a1,exampleINPUT.t6a2,exampleINPUT.t6a3,exampleINPUT.t6a4);
+LogBS = BlockLogDistribution(V, G, F, A);
+~any(round(LogBS - exampleOUTPUT.t6))
+
+disp('gibbs trans')
+clear
+load('exampleIOPA5.mat')
