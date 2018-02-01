@@ -10,6 +10,7 @@
 
 function A = GibbsTrans(A, G, F)
 
+allvars = unique([F.var]);
 for i = 1:length(G.names)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % YOUR CODE HERE
@@ -22,13 +23,9 @@ for i = 1:length(G.names)
     % Also, note that randsample() requires arguments in raw probability space
     % be sure that the arguments you pass to it meet that criteria
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
-    vari = G.names{i};
-    logS = BlockLogDistribution(vari,G,F,A);
-    Fs = F(G.var2factors{i});
-    [~,id1]= ismember(vari,Fs(1).var);
-    vals = 1:Fs(1).card(id1);
-    sample1 = randsample(vals,1,1,logS);
-    A(i) = sample1;
+
+    logBS = BlockLogDistribution(allvars(i),G,F,A); % CPD of var
+    prob = exp(logBS);
+    A(allvars(i)) = randsample(G.card(allvars(i)),1,true,prob); % sample from CPD; then assign to A(vars(i))
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 end

@@ -68,4 +68,3 @@ end
 LogBS = LogBS - min(LogBS);
 end
 
-
