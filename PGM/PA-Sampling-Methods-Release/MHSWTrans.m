@@ -47,7 +47,7 @@ if variant == 1
     % Specify the log of the distribution (LogR) from 
     % which a new label for Y is selected for variant 1 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-LogR = log(rand(1, d));
+    LogR = log(ones(1,d)./d);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 elseif variant == 2
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -59,7 +59,7 @@ elseif variant == 2
     % before implementing this, one of the generated
     % data structures may be useful in implementing this section
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-LogR = BlockLogDistribution(selected_vars, G, F, A);
+    LogR = BlockLogDistribution(selected_vars', G, F, A);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 else
     disp('WARNING: Unrecognized Swendsen-Wang Variant');
@@ -96,6 +96,31 @@ p_acceptance = 0.0;
 % the acceptance probabilitiy.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%¦Ð-ratio
+forward = 0;
+backward = 0;
+for i = 1:length(F)
+    forward = forward+log(GetValueOfAssignment(F(i),A_prop(F(i).var))); %log(¦Ð(x'))
+    backward = backward+log(GetValueOfAssignment(F(i),A(F(i).var))); %log(¦Ð(x))
+end
+log_pi_ratio = forward-backward;
+
+
+%Q-ratio
+% log_Q = log_QY+log_R
+switch variant
+    case 1
+       %R is uniform, log_R = log(1) = 0
+       log_R_ratio = 0;
+       log_Q_ratio = log_QY_ratio+log_R_ratio;
+    case 2
+        log_R_ratio = LogR(old_value(1))-LogR(new_value(1));%transition probablity, backward/forward
+        log_Q_ratio = log_QY_ratio+log_R_ratio;
+end
+
+%A, acceptance probability
+%A = min(1,¦Ð*Q)
+p_acceptance = min(1,exp(log_pi_ratio+log_Q_ratio));
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Accept or reject proposal

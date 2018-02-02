@@ -76,14 +76,17 @@ if bSwendsenWang
               % Specify the q_{i,j}'s for Swendsen-Wang for variant 1
               %
               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-       
+                q_ij = .5;
               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
           elseif strcmp(TransName, 'MHSwendsenWang2')
               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
               % YOUR CODE HERE 
               % Specify the q_{i,j}'s for Swendsen-Wang for variant 2
               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+               index_ = 1:prod(edge_factor.card);
+               Asingments = IndexToAssignment(index_,edge_factor.card);
+               a1 = (Asingments(:,1)==Asingments(:,2));
+               q_ij = sum(edge_factor.val(a1))/sum(edge_factor.val);
               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
           else
               disp('WARNING: unrecognized Swendsen-Wang name');
@@ -135,11 +138,13 @@ M=[];
 
 M = ExtractMarginalsFromSamples(G, all_samples, mix_time+1:sampling_interval:size(all_samples, 1));
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+end
 
 
 function A = MHSWTrans1(A, G, F)
 A = MHSWTrans(A, G, F, 1);
+end
 
 function A = MHSWTrans2(A, G, F)
 A = MHSWTrans(A, G, F, 2);
+end

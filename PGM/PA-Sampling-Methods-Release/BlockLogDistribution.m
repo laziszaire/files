@@ -60,7 +60,7 @@ anot = A(ivnot);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 anots = repmat(anot,d,1);
 assigmnets = [repmat([1:d]',1,length(V)),anots];
-assigmnets(:,[iv;ivnot]) = assigmnets;
+assigmnets(:,[iv(:);ivnot(:)]) = assigmnets;
 % Re-normalize to prevent underflow when you move back to probability space
 for i=1:length(F)
     LogBS = LogBS+log(GetValueOfAssignment(F(i),assigmnets(:,F(i).var)));

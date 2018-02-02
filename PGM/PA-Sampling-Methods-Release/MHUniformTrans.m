@@ -19,12 +19,13 @@ p_acceptance = 0.0;
 % YOUR CODE HERE
 % Compute acceptance probability
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-logp=0;
+logpx=0;
+logpx_ =0;
 for i = 1:length(F)
-    logp=logp+log(GetValueOfAssignment(F(i),A(F(i).var)));
-    logpp=logpp+log(GetValueOfAssignment(F(i),A_prop(F(i).var)));
+    logpx=logpx+log(GetValueOfAssignment(F(i),A(F(i).var)));%pi(x)
+    logpx_=logpx_+log(GetValueOfAssignment(F(i),A_prop(F(i).var)));%pi(x')
 end
-p_acceptance = min(1,exp(logpp-logp));
+p_acceptance = min(1,exp(logpx_-logpx));
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Accept or reject proposal
