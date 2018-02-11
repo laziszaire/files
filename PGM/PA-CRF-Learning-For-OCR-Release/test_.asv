@@ -1,0 +1,25 @@
+% StochasticGradientDescent
+load Train1X.mat
+load Train1Y.mat
+thetaOpt = LRTrainSGD(Train1X,Train1Y,0);
+pred = LRPredict(Train1X, thetaOpt);
+acc = LRAccuracy(Train1Y, pred);
+disp('accuracy is '+string(acc))
+
+%regularization
+
+load Test1X.mat
+load Test1Y.mat
+pred_test = LRPredict(Test1X, thetaOpt);
+acc_test = LRAccuracy(Test1Y, pred_test);
+disp('no regularization accuracy is '+string(acc_test))
+
+load Validation1X.mat
+load Validation1Y.mat
+load Part1Lambdas.mat
+load ValidationAccuracy.mat
+allAcc = LRSearchLambdaSGD(Train1X, Train1Y, Validation1X, Validation1Y, Part1Lambdas);
+[~,idx] = max(allAcc);
+best_lambda = Part1Lambdas(idx);
+pred_test = LRPredict(Test1X, thetaOpt);
+acc_test = LRAccuracy(Test1Y, pred_test);
