@@ -22,8 +22,7 @@ function features = ComputeConditionedSingletonFeatures (X, modelParams)
                 obs = X(v, featureNum);
                 features(featureIdx).var = v;
                 features(featureIdx).assignment = hiddenSt;
-                features(featureIdx).paramIdx = sub2ind([L featureSize K], ...
-                    obs, featureNum, hiddenSt);
+                features(featureIdx).paramIdx = sub2ind([L featureSize K],obs, featureNum, hiddenSt);
             end
         end
     end

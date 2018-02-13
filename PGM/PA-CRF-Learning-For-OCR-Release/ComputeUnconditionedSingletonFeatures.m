@@ -15,10 +15,17 @@ for st = 1:K
     for v = 1:len
         featureIdx = featureIdx + 1;
         features(featureIdx).var = v;
-        features(featureIdx).assignment = st;
-        features(featureIdx).paramIdx = paramVal;
+        %one feature: one assignment
+        features(featureIdx).assignment = st; %st, one of states{a:z, 1:26}, 
+        features(featureIdx).paramIdx = paramVal;% one assignment, one feature, one parameter.
 
     end
 end
 
 end
+
+% K = modelParams.numHiddenStates;
+% features = repmat(EmptyFeatureStruct(),K,len);
+% features.var = repmat(1:len,K,1);
+% features.assignment = repmat((1:K)',1,len);
+% features.paramIdx = repmat((1:K)',1,len);

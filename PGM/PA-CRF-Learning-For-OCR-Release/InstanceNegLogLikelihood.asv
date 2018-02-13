@@ -46,7 +46,6 @@ function [nll, grad] = InstanceNegLogLikelihood(X, y, theta, modelParams)
 % have to understand how this code works. (It's complicated.)
 
 featureSet = GenerateAllFeatures(X, modelParams);
-% X is not variable
 
 % Use the featureSet to calculate nll and grad.
 % This is the main part of the assignment, and it is very tricky - be careful!
@@ -65,8 +64,8 @@ grad = zeros(size(theta));
 % build clique tree
 features = featureSet.features;
 factors = features2factors(features,modelParams,theta);
-CliqueTree = CreateCliqueTree(factors); % F is array of factors, it is only to be a chain.
-[CliqueTree, logZ] = CliqueTreeCalibrate(CliqueTree,0); 
+CliqueTree = CreateCliqueTree(factors); % F is array of factors
+[CliqueTree, logZ] = CliqueTreeCalibrate(CliqueTree,0);
 
 %nll
 logz = logZ;
@@ -85,18 +84,16 @@ grad = modelfc - datafc + grad_reg;
 end
 %% subfuncs
 function factors = features2factors(features,modelParams,theta)
-%make factors from features
-
+%
 Nf = numel(features);
 factors = repmat(EmptyFactorStruct(),Nf,1);% one feature, one factor
-
 for i = 1:Nf
     factors(i).var = features(i).var;
     factors(i).card = ones(1,numel(features(i).var))*modelParams.numHiddenStates;
-    a = zeros(prod(factors(i).card));
-    factors(i).val = exp(a);
-    val_indicator_assingment = exp(theta(features(i).paramIdx)*1);
-    factors(i) = SetValueOfAssignment(factors(i),features(i).assignment,val_indicator_assingment);
+    a = prod(factors(i).card);
+    factores(i).val = 
 end
+end
+    
 
 end

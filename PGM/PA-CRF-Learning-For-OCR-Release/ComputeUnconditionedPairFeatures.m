@@ -20,9 +20,9 @@ for s1 = 1:K
         paramVal = sub2ind([K K], s2, s1);
         for v = 1:(len - 1)
             featureIdx = featureIdx + 1;
-            features(featureIdx).var = [v v+1];
-            features(featureIdx).assignment = [s1 s2];
-            features(featureIdx).paramIdx = paramVal;
+            features(featureIdx).var = [v v+1];        % var
+            features(featureIdx).assignment = [s1 s2]; % asssignment
+            features(featureIdx).paramIdx = paramVal;  % index crossonding to assignments
         end
     end
 end

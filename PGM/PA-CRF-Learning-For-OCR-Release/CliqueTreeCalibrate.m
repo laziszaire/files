@@ -104,10 +104,12 @@ function [P, logZ] = CliqueTreeCalibrate(P, isMax)
     % logZ, the log of the partition function.
     if (doLogZ)
         %%% YOUR CODE HERE:
-        lastMessage = unnormalizedMessages(lastCliqueOne,lastCliqueTwo);
-        exps = FactorProduct(P.cliqueList(lastCliqueTwo),lastMessage);% {Y1,Y2}, message is marginal of the rest of clique, product the two, and margianlize out all ys i the p(X_oberved)
-        logZ = log(sum(exps.val)); % marginalize out all Ys,
-        %to do
+        % marginalize out Y, do not need use params-sharing
+        % 1. pick a clique(lastCliqueTwo), integrate(prod) all the incoming message,unnormalizedMessages(cliqueOne, cliqueTwo)
+        % 2. sumout the Yi in the the prod
+        f = FactorProduct(P.cliqueList(lastCliqueTwo),unnormalizedMessages(cliqueOne, cliqueTwo));
+        Z = sum(f.val);
+        logZ = log(Z);% f,val(i) is exp(theta(i)*f(i)) %sum(f.val): sum(exp()) => Z
     else
         logZ = 0;
     end

@@ -3,7 +3,7 @@ function n = NumParamsForUnconditionedFeatures (features)
 %
 % Copyright (C) Daphne Koller, Stanford Univerity, 2012
 
-n = max([features.paramIdx]);
+n = max([features.paramIdx]); %cumsum
 
 end
 
