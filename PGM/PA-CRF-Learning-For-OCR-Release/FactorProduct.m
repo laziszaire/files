@@ -58,7 +58,8 @@ C.val = zeros(1,prod(C.card));
 assignments = IndexToAssignment(1:prod(C.card), C.card);
 indxA = AssignmentToIndex(assignments(:, mapA), A.card);
 indxB = AssignmentToIndex(assignments(:, mapB), B.card);
-
+A.val = A.val(:)';
+B.val = B.val(:)';
 C.val = A.val(indxA) .* B.val(indxB);
 
 

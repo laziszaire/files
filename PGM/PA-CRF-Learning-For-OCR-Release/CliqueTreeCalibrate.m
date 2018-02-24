@@ -105,9 +105,9 @@ function [P, logZ] = CliqueTreeCalibrate(P, isMax)
     if (doLogZ)
         %%% YOUR CODE HERE:
         % marginalize out Y, do not need use params-sharing
-        % 1. pick a clique(lastCliqueTwo), integrate(prod) all the incoming message,unnormalizedMessages(cliqueOne, cliqueTwo)
-        % 2. sumout the Yi in the the prod
-        f = FactorProduct(P.cliqueList(lastCliqueTwo),unnormalizedMessages(cliqueOne, cliqueTwo));
+        % 1. pick a clique(lastCliqueTwo), integrate(prod) all the incoming message:unnormalizedMessages(cliqueOne, cliqueTwo)
+        % 2. sumout the Yis in the the prod, X is observed 固定的,只有一条记录
+        f = FactorProduct(P.cliqueList(lastCliqueTwo),unnormalizedMessages(lastCliqueOne, lastCliqueTwo));
         Z = sum(f.val);
         logZ = log(Z);% f,val(i) is exp(theta(i)*f(i)) %sum(f.val): sum(exp()) => Z
     else

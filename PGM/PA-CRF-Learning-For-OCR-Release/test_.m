@@ -37,8 +37,7 @@ load Part2Sample
 % log linear model
 % feature: f(varibales.val) ==> R
 % parameters: feature weights
-%
+% parameter sharing
 [nll, grad] = InstanceNegLogLikelihood(sampleX, sampleY, sampleTheta, sampleModelParams);
 
-% parameter sharing
 

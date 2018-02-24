@@ -66,23 +66,24 @@ grad = zeros(size(theta));
 features = featureSet.features;
 factors = features2factors(features,modelParams,theta);
 CliqueTree = CreateCliqueTree(factors); % F is array of factors, it is only to be a chain.
-[CliqueTree, logZ] = CliqueTreeCalibrate(CliqueTree,0); 
+[CliqueTree, logZ] = CliqueTreeCalibrate(CliqueTree,0);
 
 %nll
-logz = logZ;
-% The weighted feature counts
-nnl_f = weighted_feature_counts(features,theta);
-nll_reg = lambda*sum(theta.^2)/2;
-nll = logz - nnl_f + nll_reg;
-
+[features_val,theta_] = weighted_feature_counts(y,features,theta);% The weighted feature counts
+nll_f = features_val(:)'*theta_(:); %特征项
+nll_reg = .5*modelParams.lambda*sum(theta.^2); %正则化项
+nll = logZ - nll_f + nll_reg;
 
 % grad
-modelfc = 0*theta;
-datafc = 0*theta;
-grad_reg = lambda*theta;
-grad = modelfc - datafc + grad_reg;
-
+% 期望是怎么来的啊？==>p*N
+% 每次p个，N次就是p*N
+numParams = numel(theta);
+MEfc = model_expected_feature_counts(CliqueTree,features,numParams);
+Dfc = data_feature_counts(features,features_val,numParams);
+grad_reg = modelParams.lambda*theta;
+grad = MEfc(:) - Dfc(:) + grad_reg(:);
 end
+
 %% subfuncs
 function factors = features2factors(features,modelParams,theta)
 %make factors from features
@@ -99,4 +100,53 @@ for i = 1:Nf
     factors(i) = SetValueOfAssignment(factors(i),features(i).assignment,val_indicator_assingment);
 end
 
+end
+
+function [features_val,theta_] = weighted_feature_counts(Y,features,theta)
+%parameter sharing: size(features) != size(theta)
+
+% theta_
+theta_ = theta([features.paramIdx]);
+
+
+% features 值是多少啊？和Y有关
+fh =@(var,assi) all(Y(var)==assi);
+features_val = cellfun(fh,{features.var},{features.assignment});
+end
+
+function mefc = model_expected_feature_counts(CliqueTree,features,numParams)
+%model expected feature counts
+
+mefc = zeros(numParams,1);
+Nf = numel(features);
+for i = 1:Nf
+    for j = 1:numel(CliqueTree.cliqueList)
+        if all(ismember(features(i).var,CliqueTree.cliqueList(j).var))
+            clique_ = CliqueTree.cliqueList(j);break
+        end
+    end
+    var_eli = setdiff(clique_.var,features(i).var);
+    Clique_margin = FactorMarginalization(clique_,var_eli);
+    %p
+    prob = Clique_margin.val/sum(Clique_margin.val);
+    
+    %f
+    aindx = AssignmentToIndex(features(i).assignment,Clique_margin.card);
+    features_v = 0*prob;
+    features_v(aindx) = 1;
+    
+    %expectation
+    expectation = prob(:)'*features_v(:);
+    
+    mefc(features(i).paramIdx) =  mefc(features(i).paramIdx) + expectation;
+end
+end
+
+function Dfc = data_feature_counts(features,features_val,numParams)
+%data_feature_counts
+
+Dfc = zeros(numParams,1);
+for i = 1:numel(features)
+    Dfc(features(i).paramIdx) = Dfc(features(i).paramIdx) + features_val(i);
+end
 end
