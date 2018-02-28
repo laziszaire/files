@@ -36,21 +36,10 @@ function logp = logP(O)
 
 end
 
-function [mus, sigmas] = conditionalP(Oi,P,Opi,Gj)
-%mus, sigmas for y, x,
+function cp = conditionalP(Oi,P,Opi,Gj)
 parent = [1,Gj(Opi,:)];
 theta = P.clg(Oi).theta;
-theta_ = reshape(theta',4,3,2);
-k = size(theta_,3);
-mus = zeros(3,k);
 if isempty(theta)
-    %除了class label 没有其他parent
-    sigmas = [P.clg(Oi).sigma_y;P.clg(Oi).sigma_x;P.clg(Oi).sigma_angle;];
-    mus = [P.clg(Oi).mu_y;P.clg(Oi).mu_x;P.clg(Oi).mu_angle;];
-else
-   sigmas = [P.clg(2).sigma_y;P.clg(2).sigma_x;P.clg(2).sigma_angle;];
-   for i = 1:k
-       mus(:,i) = parent*(theta_(:,:,i));
-   end
-end
+    %除了class l
+
 end
