@@ -1,4 +1,4 @@
-function [Beta sigma] = FitLinearGaussianParameters(X, U)
+function [Beta,sigma] = FitLinearGaussianParameters(X, U)
 
 % Estimate parameters of the linear Gaussian model:
 % X|U ~ N(Beta(1)*U(1) + ... + Beta(n)*U(n) + Beta(n+1), sigma^2);
@@ -27,21 +27,31 @@ sigma = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % YOUR CODE HERE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+[M,N] = size(U);
+one_ = ones(N,1);
+A = [U,one_];
+A =  A'*A/M; 
 
 % B = [ E[X]; E[X*U(1)]; ... ; E[X*U(n)] ]
-
+ 
 % construct B
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % YOUR CODE HERE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+X_ = [1;X];
+U_ = [ones(1,N);U];
+B  = U_'*X_/M;
 % solve A*Beta = B
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % YOUR CODE HERE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+Beta = A\B;
 % then compute sigma according to eq. (11) in PA description
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % YOUR CODE HERE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+covXX = mean(X.*X)-mean(X)^2;
+covU = cov(U,1).*(Beta(:)*Beta(:)');
+sumcovU = sum(covU(:));
+sigma = sqrt(covXX-sumcovU);
+end
