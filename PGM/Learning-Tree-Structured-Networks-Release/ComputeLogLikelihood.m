@@ -10,7 +10,7 @@ function loglikelihood = ComputeLogLikelihood(P, G, dataset)
 %    the log-likelihood using the right graph.
 %
 % dataset: N x 10 x 3, N poses represented by 10 parts in (y, x, alpha)
-% 
+%
 % Output:
 % loglikelihood: log-likelihood of the data (scalar)
 %
@@ -28,29 +28,55 @@ loglikelihood = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % YOUR CODE HERE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%marginal out C
+for i = 1:N
+    loglikelihood = loglikelihood+logPO_(squeeze(dataset(i,:,:)),P,G);
+end
 end
 
-function logp = logP(O)
-%loglikelihood of a instance
 
+function logPO = logPO_(D1,P,G)
+% G, graph structure,10 variable and their parent
+% P, parameters, mu, sigma and theta,classp
+% D, an instance, 10*3  numveriable*(y, x, alpha)
+
+N_variables =size(D1,1);
+cp = P.c;
+logc = log(cp);
+logO_cpd = 0*logc;
+    for i = 1:N_variables
+        logO_cpd = logO_cpd + logcpd(G(i,:),P.clg(i),D1(i,:),D1); %factor product
+    end
+logPO = log(sum(exp(logO_cpd+logc)));%marginal out C, get P(O)
 end
 
-function [mus, sigmas] = conditionalP(Oi,P,Opi,Gj)
-%mus, sigmas for y, x,
-parent = [1,Gj(Opi,:)];
-theta = P.clg(Oi).theta;
-theta_ = reshape(theta',4,3,2);
-k = size(theta_,3);
-mus = zeros(3,k);
-if isempty(theta)
-    %除了class label 没有其他parent
-    sigmas = [P.clg(Oi).sigma_y;P.clg(Oi).sigma_x;P.clg(Oi).sigma_angle;];
-    mus = [P.clg(Oi).mu_y;P.clg(Oi).mu_x;P.clg(Oi).mu_angle;];
+
+function logO_cpd = logcpd(Gi,Pi_clg,Di,D1)
+% 返回y，x，alpha的mu和sigma, 一列为一个分类class
+% log(y)+log(x)+log(alpha)
+sigmas = [Pi_clg.sigma_y;Pi_clg.sigma_x;Pi_clg.sigma_angle];
+mus = zeros(3,2);
+if Gi(1)==0
+    %Gi只有C一个parent
+    mus = [Pi_clg.mu_y;Pi_clg.mu_x;Pi_clg.mu_angle];
 else
-   sigmas = [P.clg(2).sigma_y;P.clg(2).sigma_x;P.clg(2).sigma_angle;];
-   for i = 1:k
-       mus(:,i) = parent*(theta_(:,:,i));
-   end
+    parent = [1,D1(Gi(2),:)];
+    theta_ = reshape(Pi_clg.theta',4,3,2);
+    for i = 1:2
+        mus(:,i) = parent*theta_(:,:,i);
+    end
+end
+logO_cpd = logOi(Di,mus,sigmas); %log(O|c=k,Op)
+end
+
+function logO = logOi(Di,mus,sigmas)
+% 计算Oi variable的条件log概率
+% log(y)+log(x)+log(alpha)
+
+logO = [0,0];
+for j = 1:2
+    for i = 1:3
+        logO(j) = logO(j) + lognormpdf(Di(i),mus(i,j),sigmas(i,j));
+    end
 end
 end
