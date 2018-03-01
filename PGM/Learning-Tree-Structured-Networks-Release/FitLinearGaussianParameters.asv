@@ -27,7 +27,7 @@ sigma = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % YOUR CODE HERE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+[M,N] = size(U);
 U_ = [ones(M,1),U];
 U__ = [U,ones(M,1)];
 A = U_'*U__/M;
@@ -51,7 +51,7 @@ Beta = A\B(:);
 % YOUR CODE HERE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 covXX = mean(X.*X)-mean(X)^2;
-covU = cov(U,1).*(Beta(1:end-1)*Beta(1:end-1)');
+covU = cov(U,1).*(Beta(:)*Beta(:)');
 sumcovU = sum(covU(:));
 sigma = sqrt(covXX-sumcovU);
 end
