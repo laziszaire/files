@@ -26,7 +26,9 @@ P.c = zeros(1,K);
 % you just implemented.
 %%%%%%%%%%%%%%%%%%%%%%%%%
 % YOUR CODE HERE
-
+for c =1:K
+    labels(:,c)>0
+[Beta,sigma] = FitLinearGaussianParameters(X, U);
 % These are dummy lines added so that submit.m will run even if you 
 % have not started coding. Please delete them.
 P.clg.sigma_x = 0;
