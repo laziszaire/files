@@ -1,3 +1,6 @@
+%%
+
+%%
 load PA8SampleCases.mat
 P = exampleINPUT.t3a1;
 G = exampleINPUT.t3a2;
@@ -15,3 +18,5 @@ dataset = exampleINPUT.t4a1;
 G = exampleINPUT.t4a2;
 labels = exampleINPUT.t4a3;
 [P,loglikelihood] = LearnCPDsGivenGraph(dataset, G, labels);
+% P没问题
+% loglikelihood 也怎么问题
