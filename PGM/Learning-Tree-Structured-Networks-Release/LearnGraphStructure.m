@@ -1,4 +1,4 @@
-function [A W] = LearnGraphStructure(dataset)
+function [A,W] = LearnGraphStructure(dataset)
 
 % Input:
 % dataset: N x 10 x 3, N poses represented by 10 parts in (y, x, alpha)
@@ -20,6 +20,15 @@ W = zeros(10,10);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 % YOUR CODE HERE        
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+I = zeros(10);
+for i=1:10
+    for j = 1:10
+        X = squeeze(dataset(:,i,:));
+        Y = squeeze(dataset(:,j,:));
+        I(i,j) = GaussianMutualInformation(X, Y);
+    end
+end
+W = I;
 % Compute maximum spanning tree
 A = MaxSpanningTree(W);
+end

@@ -48,17 +48,17 @@ for k = 1:K
             for j = 1:nvs
                 [Beta(:,j),sigma(j)] = FitLinearGaussianParameters(X(:,j),U);
             end
+            theta = Beta([end,1:end-1],:);%beta = [y,x,alpha,1], theta = [1,y,x,alpha]
             P.clg(var).mu_y = [];
             P.clg(var).mu_x = [];
             P.clg(var).mu_angle= [];
-            P.clg(var).theta(k,:) = Beta(:);
+            P.clg(var).theta(k,:) = theta(:);
         end
         P.clg(var).sigma_y(1,k) = sigma(1);
         P.clg(var).sigma_x(1,k) = sigma(2);
         P.clg(var).sigma_angle(1,k) = sigma(3);
     end 
 end
-
 
 loglikelihood = ComputeLogLikelihood(P, G, dataset);
 % These are dummy lines added so that submit.m will run even if you

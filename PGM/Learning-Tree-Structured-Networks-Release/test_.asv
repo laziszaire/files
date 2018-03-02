@@ -33,14 +33,8 @@ P = exampleINPUT.t5a3;
 G = exampleINPUT.t5a4;
 accuracy = ClassifyDataset(dataset, labels, P, G);
 load PA8Data.mat
-%%
-load PA8Data.mat
 [P1 likelihood1] = LearnCPDsGivenGraph(trainData.data, G1, trainData.labels);
 accuracy1 = ClassifyDataset(testData.data, testData.labels, P1, G1);
-%VisualizeModels(P1, G1);
-[P2 likelihood2] = LearnCPDsGivenGraph(trainData.data, G2, trainData.labels);
-accuracy2 = ClassifyDataset(testData.data, testData.labels, P2, G2);
-%VisualizeModels(P2, G2);
 %%
 % ---Learning Graph Structures---
 % given a scoring function
@@ -56,16 +50,10 @@ mean(W-exampleOUTPUT.t6o2)
 %%
 clear
 load PA8SampleCases.mat
-load PA8Data.mat
 dataset = exampleINPUT.t7a1;
 labels = exampleINPUT.t7a2;
 [P,G,loglikelihood] = LearnGraphAndCPDs(dataset, labels);
-%all(exampleOUTPUT.t7o2 ==G)
+all(exampleOUTPUT.t7o2 ==G)
 % G check
 % P 不对,值是对的，顺序不对是因为beta和theta顺序不对，详见LearnGraphAndCPDs
 sum(sum(P.clg(2).theta - exampleOUTPUT.t7o1.clg(2).theta))
-%%
-clear
-load PA8Data.mat
-[P3,G3,likelihood3] = LearnGraphAndCPDs(trainData.data, trainData.labels);
-ClassifyDataset(testData.data, testData.labels, P3, G3);

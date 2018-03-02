@@ -49,10 +49,9 @@ logO_cpd = 0*logc;
 %         % sumout c, log(marginal(O1)), p(O1) 
 %         logPO(i) = log(sum(exp(logO_cpd + logc))); 
     end
-    % prodcut of [P(O1|c),P(O2|c),...]
-    % bayesian P(O,c) = P(O|c)p(c)
+    %prodcut of [P(O1|c),P(O2|c),...]
     logP = logc+sum(logO_cpd);
-    %marginal out c: P(O) = for i in numel(c),sum(P(O,c(i))) 
+    %marginal out c
     logPO = log(sum(exp(logP))); %%
 end
 
