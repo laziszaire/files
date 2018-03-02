@@ -28,7 +28,7 @@ for k=1:K
 end
 
 % estimate parameters
-loglikelihood =zeros(K,1);
+loglikelihood =(;
 P.c = zeros(1,K);
 P.c = sum(labels)/size(labels,1);
 % compute P.c
@@ -68,9 +68,10 @@ for k = 1:K
         P.clg(var).sigma_y(1,k) = sigma(1);
         P.clg(var).sigma_x(1,k) = sigma(2);
         P.clg(var).sigma_angle(1,k) = sigma(3);
-    end    
+    end 
+    loglikelihood(k) = ComputeLogLikelihood(P, Gk, Dk);
 end
-loglikelihood = ComputeLogLikelihood(P, G, dataset);
+loglikelihood = sum(loglikelihood);
 % These are dummy lines added so that submit.m will run even if you 
 % have not started coding. Please delete them.
 % P.clg.sigma_x = 0;

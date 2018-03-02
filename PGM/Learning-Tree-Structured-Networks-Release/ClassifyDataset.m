@@ -14,7 +14,6 @@ function accuracy = ClassifyDataset(dataset, labels, P, G)
 % Copyright (C) Daphne Koller, Stanford Univerity, 2012
 
 N = size(dataset, 1);
-accuracy = 0.0;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % YOUR CODE HERE
@@ -35,6 +34,7 @@ function logCO = logcO(D1,P,G)
 % P, parameters, mu, sigma and theta,classp
 % D, an instance, 10*3  numveriable*(y, x, alpha)
 
+%return joint P(C,O)
 N_variables =size(D1,1);
 cp = P.c;
 logc = log(cp);
@@ -42,36 +42,40 @@ logO_cpd = 0*logc;
     for i = 1:N_variables
         logO_cpd = logO_cpd + logcpd(G(i,:),P.clg(i),D1(i,:),D1); %factor product
     end
-logCO = logO_cpd+logc;%factor product
+logCO = logO_cpd+logc; %bayessian rule
 end
 
 
-function logO_cpd = logcpd(Gi,Pi_clg,Di,D1)
-% 返回y，x，alpha的mu和sigma, 一列为一个分类class
+function logO_cpd = logcpd(Gi,Pi_clg,Oi,Os)
 % log(y)+log(x)+log(alpha)
-sigmas = [Pi_clg.sigma_y;Pi_clg.sigma_x;Pi_clg.sigma_angle];
-mus = zeros(3,2);
-if Gi(1)==0
-    %Gi只有C一个parent
-    mus = [Pi_clg.mu_y;Pi_clg.mu_x;Pi_clg.mu_angle];
-else
-    parent = [1,D1(Gi(2),:)];
-    theta_ = reshape(Pi_clg.theta',4,3,2);
-    for i = 1:2
-        mus(:,i) = parent*theta_(:,:,i);
+%Gi为2*numberclass
+
+%logO_cpd :[1,K]
+Gi = reshape(Gi,2,[]);
+K = numel(Pi_clg.sigma_y);
+if size(Gi,2)==1,Gi = repmat(Gi,1,K);end
+logO_cpd = zeros(1,K);
+for k = 1:K
+    sigmas_k = [Pi_clg.sigma_y(k);Pi_clg.sigma_x(k);Pi_clg.sigma_angle(k)];
+    if Gi(1,k)==0  %Gaussian
+        mus_k= [Pi_clg.mu_y(k);Pi_clg.mu_x(k);Pi_clg.mu_angle(k)];
+    else           %CLG
+        theta_ = reshape(Pi_clg.theta',4,3,K);%[1,y,x,alpha]*[y,x,alpha]*num_class
+        parent = [1,Os(Gi(2,k),:)];
+        mus_k = parent*squeeze(theta_(:,:,k));
     end
+    logO_cpd(k) = logOi(Oi,mus_k,sigmas_k); %log(O|c=k,Op)
 end
-logO_cpd = logOi(Di,mus,sigmas); %log(O|c=k,Op)
+
 end
 
 function logO = logOi(Di,mus,sigmas)
 % 计算Oi variable的条件log概率
 % log(y)+log(x)+log(alpha)
 
-logO = [0,0];
-for j = 1:2
-    for i = 1:3
-        logO(j) = logO(j) + lognormpdf(Di(i),mus(i,j),sigmas(i,j));
-    end
+num_yxalpha = numel(mus);
+logO = 0;
+for i = 1:num_yxalpha
+    logO = logO+ lognormpdf(Di(i),mus(i),sigmas(i));
 end
 end

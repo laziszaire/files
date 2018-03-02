@@ -11,7 +11,6 @@ dataset = exampleINPUT.t3a3;
  loglikelihood = ComputeLogLikelihood(P, G, dataset);
  loglikelihood-exampleOUTPUT.t3
 
- 
  %% learning parameters with known graph structures
  % 可能有多个图结构
 clear
@@ -53,7 +52,7 @@ dataset = exampleINPUT.t6a1;
 [A,W] = LearnGraphStructure(dataset);
 A == exampleOUTPUT.t6o1
 mean(W-exampleOUTPUT.t6o2)
-%%
+%% LearnGraphAndCPDs
 clear
 load PA8SampleCases.mat
 load PA8Data.mat
@@ -63,9 +62,14 @@ labels = exampleINPUT.t7a2;
 %all(exampleOUTPUT.t7o2 ==G)
 % G check
 % P 不对,值是对的，顺序不对是因为beta和theta顺序不对，详见LearnGraphAndCPDs
-sum(sum(P.clg(2).theta - exampleOUTPUT.t7o1.clg(2).theta))
+% sum(sum(P.clg(2).theta - exampleOUTPUT.t7o1.clg(2).theta))
+
+%loglikelihood
+loglikelihood - exampleOUTPUT.t7o3
 %%
 clear
 load PA8Data.mat
 [P3,G3,likelihood3] = LearnGraphAndCPDs(trainData.data, trainData.labels);
 ClassifyDataset(testData.data, testData.labels, P3, G3);
+%likelihood对了
+%accuracy不对
