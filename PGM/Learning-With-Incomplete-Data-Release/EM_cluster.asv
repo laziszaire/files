@@ -120,7 +120,7 @@ for k = 1:K
     W_k = ClassProb(:,k);%influence weights of instance for class k
     Gk=G;if numel(size(G))==3,Gk = squeeze(G(:,:,k));end
     for i_O = 1:nO
-        [Oi_has_parent,Oi_parent_id] = deal(Gk(i_O,1),Gk(i_O,2));%bug fixed，下次别这样复制了
+        [Oi_has_parent,Oi_parent_id] = deal(Gk(i_O,1),Gk(i_O,1));
         X = squeeze(dataset(:,i_O,:));
         [y,x,angle] = deal(X(:,1),X(:,2),X(:,3));
         if ~Oi_has_parent
@@ -147,17 +147,15 @@ function ClassProb = E_step(P,G,dataset)
 [M,~,~] =size(dataset);
 K = numel(P.clg(1).sigma_y);
 logp_cO_ = zeros(M,K);
-logpO_ = logp_cO_(:,1);
+logPO = logCO(:,1);
 for i = 1:M
     %joint: p(c,O)
-    [logpO_(i),logp_cO_(i,:)] = logpO(squeeze(dataset(i,:,:)),P,G);
+    [logpO_(i,:),logp_cO_(i,:)] = logpO(squeeze(dataset(i,:,:)),P,G);
 end
-% condition on p(O) ==> p(c|O) = p(c,O)/p(O)
-% logp(c|O) = logp(c,O)-logp_O
+% condition on p(O)
 % ClassProb = exp(logCO - logPO);
-
-logp_c_given_O= bsxfun(@minus,logp_cO_,logpO_);
-ClassProb = exp(logp_c_given_O);
+logCO_cpd = bsxfun(@minus,logp_cO_,logsumexp(logp_cO_));
+ClassProb = exp(logCO_cpd);
 end
 
 
