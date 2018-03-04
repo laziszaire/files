@@ -30,6 +30,7 @@ end
 
 
 function logCO = logcO(D1,P,G)
+% joint p(c,O)
 % G, graph structure,10 variable and their parent
 % P, parameters, mu, sigma and theta,classp
 % D, an instance, 10*3  numveriable*(y, x, alpha)
