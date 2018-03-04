@@ -148,7 +148,7 @@ function ClassProb = E_step(P,G,dataset)
 K = numel(P.clg(1).sigma_y);
 logp_cO_ = zeros(M,K);
 logpO_ = logp_cO_(:,1);
-for i = 1:M
+parfor i = 1:M
     %joint: p(c,O)
     [logpO_(i),logp_cO_(i,:)] = logpO(squeeze(dataset(i,:,:)),P,G);
 end
@@ -167,7 +167,7 @@ function loglikelihood = ComputeLogLikelihood(P, G, dataset)
 
 N_instance = size(dataset,1);
 loglikelihood =0;
-for i = 1:N_instance
+parfor i = 1:N_instance
     loglikelihood = loglikelihood+logpO(squeeze(dataset(i,:,:)),P,G);
 end
 end
