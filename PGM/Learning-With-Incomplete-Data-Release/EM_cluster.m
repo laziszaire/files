@@ -145,10 +145,13 @@ function ClassProb = E_step(P,G,dataset)
 [M,~,~] =size(dataset);
 K = numel(P.clg(1).sigma_y);
 logCO = zeros(M,K);
+% logPO = logCO;
 for i = 1:M
     %joint
     logCO(i,:) = logcO(squeeze(dataset(i,:,:)),P,G);
+%     logPO(i,:) = logPO_(squeeze(dataset(i,:,:)),P,G);
 end
+% ClassProb = exp(logCO - logPO);
 % normalize
 logCO_cpd = bsxfun(@minus,logCO,logsumexp(logCO));
 ClassProb = exp(logCO_cpd);
