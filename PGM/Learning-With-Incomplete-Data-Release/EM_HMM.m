@@ -53,7 +53,7 @@ for iter=1:maxIter
   % Make sure to choose the right parameterization based on G(i,1)
   % Hint: This part should be similar to your work from PA8 and EM_cluster.m
   
-  P.c = zeros(1,K);
+%   P.c = zeros(1,K);
   
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % YOUR CODE HERE
@@ -64,15 +64,16 @@ for iter=1:maxIter
   % M-STEP to estimate parameters for transition matrix
   % Fill in P.transMatrix, the transition matrix for states
   % P.transMatrix(i,j) is the probability of transitioning from state i to state j
-  P.transMatrix = zeros(K,K);
+%   P.transMatrix = zeros(K,K);
   
   % Add Dirichlet prior based on size of poseData to avoid 0 probabilities
-  P.transMatrix = P.transMatrix + size(PairProb,1) * .05;
+%   P.transMatrix = P.transMatrix + size(PairProb,1) * .05;
   
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % YOUR CODE HERE
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  
+  P = Mstep_HMM(ClassProb,PairProb,G,actionData,poseData);
+  P.transMatrix = P.transMatrix + size(PairProb,1) * .05;
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
     
