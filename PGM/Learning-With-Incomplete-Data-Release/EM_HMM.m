@@ -46,87 +46,87 @@ P.clg.sigma_angle = [];
 
 % EM algorithm
 for iter=1:maxIter
-  
-  % M-STEP to estimate parameters for Gaussians
-  % Fill in P.c, the initial state prior probability (NOT the class probability as in PA8 and EM_cluster.m)
-  % Fill in P.clg for each body part and each class
-  % Make sure to choose the right parameterization based on G(i,1)
-  % Hint: This part should be similar to your work from PA8 and EM_cluster.m
-  
-%   P.c = zeros(1,K);
-  
-  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  % YOUR CODE HERE
-  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
-  
-  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  
-  % M-STEP to estimate parameters for transition matrix
-  % Fill in P.transMatrix, the transition matrix for states
-  % P.transMatrix(i,j) is the probability of transitioning from state i to state j
-%   P.transMatrix = zeros(K,K);
-  
-  % Add Dirichlet prior based on size of poseData to avoid 0 probabilities
-%   P.transMatrix = P.transMatrix + size(PairProb,1) * .05;
-  
-  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  % YOUR CODE HERE
-  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  P = Mstep_HMM(ClassProb,PairProb,G,actionData,poseData);
-  P.transMatrix = P.transMatrix + size(PairProb,1) * .05;
-  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  
     
-  % E-STEP preparation: compute the emission model factors (emission probabilities) in log space for each 
-  % of the poses in all actions = log( P(Pose | State) )
-  % Hint: This part should be similar to (but NOT the same as) your code in EM_cluster.m
-  
-%   logEmissionProb = zeros(N,K);
-  
-  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  % YOUR CODE HERE
-  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  
-  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  
+    % M-STEP to estimate parameters for Gaussians
+    % Fill in P.c, the initial state prior probability (NOT the class probability as in PA8 and EM_cluster.m)
+    % Fill in P.clg for each body part and each class
+    % Make sure to choose the right parameterization based on G(i,1)
+    % Hint: This part should be similar to your work from PA8 and EM_cluster.m
     
-  % E-STEP to compute expected sufficient statistics
-  % ClassProb contains the conditional class probabilities for each pose in all actions
-  % PairProb contains the expected sufficient statistics for the transition CPDs (pairwise transition probabilities)
-  % Also compute log likelihood of dataset for this iteration
-  % You should do inference and compute everything in log space, only converting to probability space at the end
-  % Hint: You should use the logsumexp() function here to do probability normalization in log space to avoid numerical issues
-  
-  ClassProb = zeros(N,K);
-  PairProb = zeros(V,K^2);
-  loglikelihood(iter) = 0;
-  
-  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  % YOUR CODE HERE
-  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  for i = 1:numel(actionData) 
-[M, PCalibrated] = Estep_HMM(P,G,actionData(i),poseData);%M[s],M[s,s']
-  ClassProb(actionData(i).marg_ind,:) = cat(1,M.val);
-%   MSS(i,:) = logsumexp(cat(1,{PCalibrated.val}));
-  PairProb(actionData(i).pair_ind,:) = cat(1,PCalibrated.cliqueList.val);
-  end 
-  loglikelihood(iter) = logsumexp(PCalibrated.cliqueList(1).val);
-  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  
-  % Print out loglikelihood
-  disp(sprintf('EM iteration %d: log likelihood: %f', ...
-    iter, loglikelihood(iter)));
-  if exist('OCTAVE_VERSION')
-    fflush(stdout);
-  end
-  
-  % Check for overfitting by decreasing loglikelihood
-  if iter > 1
-    if loglikelihood(iter) < loglikelihood(iter-1)
-      break;
+    %   P.c = zeros(1,K);
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % YOUR CODE HERE
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    % M-STEP to estimate parameters for transition matrix
+    % Fill in P.transMatrix, the transition matrix for states
+    % P.transMatrix(i,j) is the probability of transitioning from state i to state j
+    %   P.transMatrix = zeros(K,K);
+    
+    % Add Dirichlet prior based on size of poseData to avoid 0 probabilities
+    %   P.transMatrix = P.transMatrix + size(PairProb,1) * .05;
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % YOUR CODE HERE
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    P = Mstep_HMM(ClassProb,PairProb,G,actionData,poseData);
+    P.transMatrix = P.transMatrix + size(PairProb,1) * .05;
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    
+    % E-STEP preparation: compute the emission model factors (emission probabilities) in log space for each
+    % of the poses in all actions = log( P(Pose | State) )
+    % Hint: This part should be similar to (but NOT the same as) your code in EM_cluster.m
+    
+    %   logEmissionProb = zeros(N,K);
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % YOUR CODE HERE
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    
+    % E-STEP to compute expected sufficient statistics
+    % ClassProb contains the conditional class probabilities for each pose in all actions
+    % PairProb contains the expected sufficient statistics for the transition CPDs (pairwise transition probabilities)
+    % Also compute log likelihood of dataset for this iteration
+    % You should do inference and compute everything in log space, only converting to probability space at the end
+    % Hint: You should use the logsumexp() function here to do probability normalization in log space to avoid numerical issues
+    
+    ClassProb = zeros(N,K);
+    PairProb = zeros(V,K^2);
+    loglikelihood(iter) = 0;
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % YOUR CODE HERE
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    for i = 1:numel(actionData)
+        [M, PCalibrated] = Estep_HMM(P,G,actionData(i),poseData);%M[s],M[s,s']
+        ClassProb(actionData(i).marg_ind,:) = cat(1,M.val);
+        %   MSS(i,:) = logsumexp(cat(1,{PCalibrated.val}));
+        PairProb(actionData(i).pair_ind,:) = cat(1,PCalibrated.cliqueList.val);
     end
-  end
-  
+    loglikelihood(iter) = logsumexp(PCalibrated.cliqueList(1).val);
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    % Print out loglikelihood
+    disp(sprintf('EM iteration %d: log likelihood: %f', ...
+        iter, loglikelihood(iter)));
+    if exist('OCTAVE_VERSION')
+        fflush(stdout);
+    end
+    
+    % Check for overfitting by decreasing loglikelihood
+    if iter > 1
+        if loglikelihood(iter) < loglikelihood(iter-1)
+            break;
+        end
+    end
+    
 end
 
 % Remove iterations if we exited early

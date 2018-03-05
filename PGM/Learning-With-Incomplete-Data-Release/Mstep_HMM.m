@@ -9,7 +9,7 @@ P.c = norm_(mean(ClassProb(s1_ind,:)));
 
 % p(s'|s) ==> P.transMatrix
 
-fh = @(pair_ind) mean(PairProb(pair_ind,:));
+fh = @(pair_ind) mean(PairProb(pair_ind,:)); %todo fix logp ==>p
 mean_action1 = cellfun(fh,{actionData.pair_ind},'uniformoutput',false);
 mean_dataset = mean(cat(1,mean_action1{:}));
 P.transMatrix = reshape(norm_(mean_dataset),K,[]);
