@@ -105,12 +105,12 @@ for iter=1:maxIter
   % YOUR CODE HERE
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   for i = 1:numel(actionData) 
-[M, PCalibrated] = Estep_HMM(P,G,actionData(i),poseData);%M[s],M[s,s']
-  ClassProb(actionData(i).marg_ind,:) = cat(1,M.val);
-%   MSS(i,:) = logsumexp(cat(1,{PCalibrated.val}));
-  PairProb(actionData(i).pair_ind,:) = cat(1,PCalibrated.cliqueList.val);
+  [M, PCalibrated] = Estep_HMM(P,G,actionData(i),poseData);%M[s],M[s,s']
+  ClassProb(actionData(i).marg_in = cat(1,{M.val});
+  MSS(i,:) = logsumexp(cat(1,{PCalibrated.val}));
   end 
-  loglikelihood(iter) = logsumexp(PCalibrated.cliqueList(1).val);
+  %
+  ClassProb = cat(1,{M.val});
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
   % Print out loglikelihood
