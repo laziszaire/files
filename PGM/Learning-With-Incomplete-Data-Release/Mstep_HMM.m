@@ -1,6 +1,7 @@
 function P = Mstep_HMM(ClassProb,PairProb,G,actionData,poseData)
 %MLE of parameters
 
+% ClassProb is the soft assignments of the hidden states in log space
 K = size(ClassProb, 2);
 % p(s) ==> P.c
 
@@ -9,21 +10,26 @@ P.c = norm_(mean(ClassProb(s1_ind,:)));
 
 % p(s'|s) ==> P.transMatrix
 
-fh = @(pair_ind) mean(PairProb(pair_ind,:)); %todo fix logp ==>p
+fh = @(pair_ind) mean(PairProb(pair_ind,:)); %
 mean_action1 = cellfun(fh,{actionData.pair_ind},'uniformoutput',false);
 mean_dataset = mean(cat(1,mean_action1{:}));
-P.transMatrix = reshape(norm_(mean_dataset),K,[]);
+P.transMatrix = norm_m(reshape(mean_dataset,K,[]));
 
 %p(O|s) ==> P.clg
 P.clg = est_clg(G,poseData,ClassProb);
 end
 %% subfunctions
 
+function p = norm_m(measure)
+
+p = bsxfun(@rdivide,measure,sum(measure,2));
+end
+
 function p = norm_(measure)
-%normalize measure to get a probablity
 
 p = measure/sum(measure);
 end
+
 
 
 function clg = est_clg(G,dataset,classProb)

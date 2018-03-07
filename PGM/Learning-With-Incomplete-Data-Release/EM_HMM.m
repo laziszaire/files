@@ -110,7 +110,11 @@ for iter=1:maxIter
         %   MSS(i,:) = logsumexp(cat(1,{PCalibrated.val}));
         PairProb(actionData(i).pair_ind,:) = cat(1,PCalibrated.cliqueList.val);
     end
+    ClassProb = normlog2p(ClassProb);
+    PairProb =  normlog2p(PairProb);
     loglikelihood(iter) = logsumexp(PCalibrated.cliqueList(1).val);
+    
+    %normalize
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     % Print out loglikelihood
@@ -131,4 +135,12 @@ end
 
 % Remove iterations if we exited early
 loglikelihood = loglikelihood(1:iter);
+end
+
+function p = normlog2p(logp)
+% logp×ª»»µ½p
+% normalize
+
+m = exp(logp);
+p = bsxfun(@rdivide,m,sum(m,2));
 end
