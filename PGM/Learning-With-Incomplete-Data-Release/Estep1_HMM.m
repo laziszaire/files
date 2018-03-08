@@ -36,8 +36,8 @@ function logpPS = logpPS_(G,P,pose)
 %p(P|S),observed P ==> phi(S)
 
 nO = size(G,1);
-logP = P.c*0;
 K = numel(P.c);
+logP = zeros(nO,K);
 for k = 1:K
     for i_O=1:nO
         sigmas = [P.clg(i_O).sigma_y(k),P.clg(i_O).sigma_x(k),P.clg(i_O).sigma_angle(k)];
@@ -49,8 +49,9 @@ for k = 1:K
         else
             mus = [P.clg(i_O).mu_y(k),P.clg(i_O).mu_x(k),P.clg(i_O).mu_angle(k)];
         end
-        logP(i_O) = logOi(pose,mus,sigmas);
+        logP(i_O,k) = logOi(pose(i_O,:),mus,sigmas);
     end
-    logpPS = logsumexp(logP);% p(P|S)
 end
+    logpPS = sum(logP);%factor product of Os
+% fixed bug, next and  do not normalize,    logpPS = bsxfun(@minus,logpPS,logsumexp(logpPS));% p(P|S) 
 end

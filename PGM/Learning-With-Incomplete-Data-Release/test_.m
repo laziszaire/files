@@ -20,5 +20,8 @@ load PA9SampleCases
                                                 exampleINPUT.t2a5,...
                                                 exampleINPUT.t2a6);
 [P,loglikelihood,ClassProb,PairProb] = EM_HMM(actionData, poseData, G, InitialClassProb, InitialPairProb, maxIter);
-%P.transMatrix check
-P.transMatrix - exampleOUTPUT.t2a1.transMatrix
+% %P.transMatrix check
+% ClassProb check
+% PairProb check
+
+% [P loglikelihood ClassProb PairProb] = EM_HMM_(actionData, poseData, G, InitialClassProb, InitialPairProb, maxIter)
