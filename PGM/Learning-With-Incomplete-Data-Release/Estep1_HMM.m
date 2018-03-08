@@ -1,30 +1,23 @@
-function [M, PCalibrated] = Estep_HMM(P,G,actionData1,poseData)
+function [M, PCalibrated] = Estep1_HMM(P,G,actionData1,poseData)
 %soft assignement of hidden variables: marginal of hidden variables
 
 K = numel(P.c);
-F = get_factors(actionData1.marg_ind,actionData1.pair_ind,P,G,K,poseData);
+F = get_factors(actionData1.marg_ind,P,G,K,poseData);
 [M, PCalibrated] = ComputeExactMarginalsHMM(F);
-
 end
 
-function fs = get_factors(marg_ind,pair_ind,P,G,K,poseData)
+
+function fs = get_factors(marg_ind,P,G,K,poseData)
 %factor value in log space
 
-%p(S)
 nS = numel(marg_ind);
-pS = repmat(struct('var',[],'card',K,'val',log(P.c)),nS,1);
-pS(1).val = log(P.c);
-pS(1).var = 1;
-fh = @(m) m/sum(m);
-for i = 2:nS
-    pS(i).var = i;
-    pS(i).val = log(fh(exp(pS(i-1).val)*P.transMatrix));%logspace
-end
+
+%p(S1)
+pS1 = struct('var',1,'card',K,'val',log(P.c));
 
 %p(S'|S)
-nSS = numel(pair_ind);
-pSS = repmat(struct('var',[],'card',[K,K],'val',log(reshape(P.transMatrix,1,[]))),nSS,1);
-for i = 1:nSS
+pSS = repmat(struct('var',[],'card',[K,K],'val',log(reshape(P.transMatrix,1,[]))),nS-1,1);%log space
+for i = 1:nS-1
     pSS(i).var = [i,i+1];
 end
 
@@ -32,19 +25,19 @@ end
 
 pPS = repmat(struct('var',[],'card',K,'val',[]),nS,1);
 for i = 1:nS
-    logpPS = logpPS_(G,P,squeeze(poseData(i,:,:)),pS(i).val);
+    logpPS = logpPS_(G,P,squeeze(poseData(marg_ind(i),:,:))); %do need prior probability
     pPS(i).val = logpPS;
     pPS(i).var = i;%ith hidden state of an action i.
 end
-fs = [pS;pSS;pPS];
+fs = [pS1;pSS;pPS];
 end
 
-function logpPS = logpPS_(G,P,pose,logS)
+function logpPS = logpPS_(G,P,pose)
 %p(P|S),observed P ==> phi(S)
 
 nO = size(G,1);
-logP = logS*0;
-K = numel(logS);
+logP = P.c*0;
+K = numel(P.c);
 for k = 1:K
     for i_O=1:nO
         sigmas = [P.clg(i_O).sigma_y(k),P.clg(i_O).sigma_x(k),P.clg(i_O).sigma_angle(k)];
@@ -58,6 +51,6 @@ for k = 1:K
         end
         logP(i_O) = logOi(pose,mus,sigmas);
     end
-    logpPS = sum(logP)+logS;
+    logpPS = logsumexp(logP);% p(P|S)
 end
 end

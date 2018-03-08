@@ -164,6 +164,7 @@ end
 
 function loglikelihood = ComputeLogLikelihood(P, G, dataset)
 %logp(O)
+% probability of the dataset, not include the class
 
 N_instance = size(dataset,1);
 loglikelihood =0;

@@ -106,12 +106,12 @@ for iter=1:maxIter
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     for i = 1:numel(actionData)
         [M, PCalibrated] = Estep1_HMM(P,G,actionData(i),poseData);
-        ClassProb(actionData(i).marg_ind,:) = cat(1,M.val);
+        ClassProb(actionData(i).marg_ind,:) = exp(ClassProb)cat(1,M.val);
         %   MSS(i,:) = logsumexp(cat(1,{PCalibrated.val}));
         PairProb(actionData(i).pair_ind,:) = cat(1,PCalibrated.cliqueList.val);%logspace, cliqueList(22,23) =>(s,s')
     end
     ClassProb = exp(ClassProb);
-    PairProb = exp(PairProb-logsumexp(PairProb));
+    
     
     loglikelihood(iter) = logsumexp(PCalibrated.cliqueList(1).val);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -159,6 +159,65 @@ P.transMatrix = norm_m(sum(reshape(PairProb',K,K,[]),3)+dirchlet);%dirchlet
 P.clg = est_clg(G,poseData,ClassProb);
 end
 
+function fs = get_factors(marg_ind,P,G,K,poseData)
+%factor value in log space
+
+nS = numel(marg_ind);
+
+%p(S1)
+pS1 = struct('var',1,'card',K,'val',log(P.c));
+
+%p(S'|S)
+pSS = repmat(struct('var',[],'card',[K,K],'val',log(reshape(P.transMatrix,1,[]))),nS-1,1);%log space
+for i = 1:nS-1
+    pSS(i).var = [i,i+1];
+    %pSS(i).val = reshape(P.transMatrix,1,[]);
+end
+
+%p(P|S),observed P ==> phi(S)
+
+pPS = repmat(struct('var',[],'card',K,'val',[]),nS,1);
+for i = 1:nS
+    logpPS = logpPS_(G,P,squeeze(poseData(marg_ind(i),:,:))); %do need prior probability
+    pPS(i).val = logpPS;
+    pPS(i).var = i;%ith hidden state of an action i.
+end
+fs = [pS1;pSS;pPS];
+end
+
+function logpPS = logpPS_(G,P,pose)
+%p(P|S),observed P ==> phi(S)
+
+nO = size(G,1);
+logP = P.c*0;
+K = numel(P.c);
+for k = 1:K
+    for i_O=1:nO
+        sigmas = [P.clg(i_O).sigma_y(k),P.clg(i_O).sigma_x(k),P.clg(i_O).sigma_angle(k)];
+        if isempty(P.clg(i_O).mu_y)
+            %compute mu of CLG
+            parent = [1,squeeze(pose(G(i_O,2),:))];
+            theta_k = reshape(P.clg(i_O).theta(k,:),4,3);
+            mus = parent*theta_k;
+        else
+            mus = [P.clg(i_O).mu_y(k),P.clg(i_O).mu_x(k),P.clg(i_O).mu_angle(k)];
+        end
+        logP(i_O) = logOi(pose,mus,sigmas);
+    end
+    logpPS = logsumexp(logP);% p(P|S)
+end
+end
+
+function p = norm_m(measure)
+
+p = bsxfun(@rdivide,measure,sum(measure,2));
+end
+
+function p = norm_(measure)
+
+p = measure/sum(measure);
+end
+
 function clg = est_clg(G,dataset,classProb)
 %
 %dataset:posedata
@@ -194,12 +253,10 @@ for k = 1:K
 end
 end
 
-function p = norm_m(measure)
+function p = normlog2p(logp)
+% logp×ª»»µ½p
+% normalize
 
-p = bsxfun(@rdivide,measure,sum(measure,2));
-end
-
-function p = norm_(measure)
-
-p = measure/sum(measure);
+m = exp(logp);
+p = bsxfun(@rdivide,m,sum(m,2));
 end
