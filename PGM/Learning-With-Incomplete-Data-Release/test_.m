@@ -24,4 +24,13 @@ load PA9SampleCases
 % ClassProb check
 % PairProb check
 
-% [P loglikelihood ClassProb PairProb] = EM_HMM_(actionData, poseData, G, InitialClassProb, InitialPairProb, maxIter)
+%%
+clear
+load PA9SampleCases
+[datasetTrain, datasetTest, G, maxIter] = deal(exampleINPUT.t3a1,...
+                                                exampleINPUT.t3a2,...
+                                                exampleINPUT.t3a3,...
+                                                exampleINPUT.t3a4);
+[accuracy, predicted_labels] = RecognizeActions(datasetTrain, datasetTest, G, maxIter);
+
+%%
