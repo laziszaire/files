@@ -2,8 +2,7 @@
 %   B = FactorMarginalization(A,V) computes the factor with the variables
 %   in V summed out. The factor data structure has the following fields:
 %       .var    Vector of variables in the factor, e.g. [1 2 3]
-%       .card   Vector of cardinalities corresponding to .var, e.g. [2 2
-%       2]每个变量的可取值得个数？
+%       .card   Vector of cardinalities corresponding to .var, e.g. [2 2 2]
 %       .val    Value table of size prod(.card)
 %
 %   The resultant factor should have at least one variable remaining or this
@@ -39,9 +38,9 @@ indxB = AssignmentToIndex(assignments(:, mapB), B.card);
 % YOUR CODE HERE
 % Correctly populate the factor values of B
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-for idx = 1:max(indxB)
-    B.val(idx) = sum(A.val(idx == indxB));
-end
-
+uidxB = unique(indxB);
+ for i=1:numel(uidxB);
+     B.val(uidxB(i)) = sum(A.val(indxB==uidxB(i)));
+ end  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 end
