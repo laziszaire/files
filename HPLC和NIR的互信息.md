@@ -64,5 +64,5 @@ f.savefig('NIR和IR之间的互信息.png',dpi=300)
 ```
 
 
-![png](output_5_0.png)
+![png](./pics/MI_NIR_HPLC.png)
 
