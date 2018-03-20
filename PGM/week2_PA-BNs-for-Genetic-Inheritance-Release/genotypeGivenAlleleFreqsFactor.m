@@ -73,9 +73,12 @@ end
 end
 
 function p = pgeno(geno,genotypesToAlleles,alleleFreqs)
+%计算genotype的概率
+
 allele = genotypesToAlleles(geno,:);
 p = alleleFreqs(allele(1)).*alleleFreqs(allele(2));
-if allele(1) ~= allele(2)
+
+if allele(1) ~= allele(2)%Aa和aA是一个型
     p = 2*p;
 end
 end

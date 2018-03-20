@@ -68,7 +68,7 @@ nw = numel(weights);
 pheno = assignmenti(1);
 assignment1 = num2cell(assignmenti(2:2+nw-1));
 assignment2 = num2cell(assignmenti(2+nw:end));
-fh = @(weightsi,assignment) weightsi(assignment);%one hot in bed
+fh = @(weightsi,assignment) weightsi(assignment);%one hot embed
 z = sum(cellfun(fh,weights,assignment1)+cellfun(fh,weights,assignment2));
 p = computeSigmoid(z);%score
 if pheno == 2
