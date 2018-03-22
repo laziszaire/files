@@ -74,17 +74,23 @@ end
 end
 
 function p = pgc(assignments,genotypesToAlleles,allelesToGenotypes)
-%
+%计算一条assignment的概率，p(子代|父母代)
+
+%geno
 childgeno = assignments(1);
 parentsgeno = assignments(2:end);
 parent1geno = parentsgeno(1);
 parent2geno = parentsgeno(2);
+
+%allele
 p1allele = genotypesToAlleles(parent1geno,:);
 p2allele = genotypesToAlleles(parent2geno,:);
 callele = genotypesToAlleles(childgeno,:);
-pc_allele = possible_allele(p1allele,p2allele);
-cgeno = fallelesToGenotypes(callele,allelesToGenotypes);
-pc_geno = fallelesToGenotypes(pc_allele,allelesToGenotypes);
+
+%
+pc_allele = possible_allele(p1allele,p2allele);%父母可能生成的子代基因型
+cgeno = fallelesToGenotypes(callele,allelesToGenotypes);% scalar e.g, aaA
+pc_geno = fallelesToGenotypes(pc_allele,allelesToGenotypes);% vector,n*1 e.g., [Aaa,aaA,aAa,aaa]
 a = cgeno == pc_geno;
 p = sum(a)/numel(a);
 end
@@ -99,6 +105,8 @@ end
 end
 
 function pa = possible_allele(p1allele,p2allele)
+%给的父母的基因型，子代可能的基因型
+
 e = 1;
 n = numel(p1allele);
 pa = zeros(n*n,2);
