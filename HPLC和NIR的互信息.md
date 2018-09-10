@@ -36,7 +36,7 @@ X = lc.loc[common_observation] #LC
 <h1 style="text-align:center">I(X, Y) = H(X) + H(Y) - H(X,Y) </h1>
 
 在概率论和信息论中，两个随机变量的互信息（Mutual Information，简称MI）或转移信息（transinformation）是变量间相互依赖性的量度，是变量间共有的信息。详细可参考[这里](https://zh.wikipedia.org/wiki/%E4%BA%92%E4%BF%A1%E6%81%AF)  
-![共有信息]("https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Entropy-mutual-information-relative-entropy-relation-diagram.svg/384px-Entropy-mutual-information-relative-entropy-relation-diagram.svg.png")  
+![共有信息](https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Entropy-mutual-information-relative-entropy-relation-diagram.svg/384px-Entropy-mutual-information-relative-entropy-relation-diagram.svg.png "共有信息")  
 计算NIR每个波数的吸光度和LC每个峰之间的互信息，以此来表示NIR和LC之间的联系 
 
 
